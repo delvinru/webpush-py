@@ -4,7 +4,7 @@ from pathlib import Path
 
 import jwt
 from cryptography.hazmat.primitives import serialization
-from pydantic import AnyHttpUrl
+from pydantic import AnyHttpUrl, EmailStr
 
 
 class VAPIDException(Exception):
@@ -30,7 +30,7 @@ class VAPID:
             self.public_key = serialization.load_pem_public_key(fd.read())
 
     def get_authorization_header(
-        self, endpoint: AnyHttpUrl, subscriber: str, expiration: int
+        self, endpoint: AnyHttpUrl, subscriber: EmailStr, expiration: int
     ) -> str:
         """
         :param endpoint from subscribtion info

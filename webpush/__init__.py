@@ -29,12 +29,14 @@ class WebPush:
         self,
         private_key: Path,
         public_key: Path,
+        subscriber: EmailStr | None,
         ttl: int = 0,
         expiration: int = 12 * 60 * 60,
     ) -> None:
         """
         :param private_key - file with private VAPID key
         :param public_key - file with public VAPID key
+        :param subscriber - (global) email address require for VAPID
         :param ttl - (global) lifespan of a web push message in seconds
         :param expiration - (global) time after which the token expires
             value must not be more than 24 hours from the of the request
@@ -50,12 +52,13 @@ class WebPush:
 
         self.ttl = ttl
         self.expiration = expiration
+        self.subscriber = subscriber or ""
 
     def get(
         self,
         message: bytes | str | dict,
         subscription: WebPushSubscription,
-        subscriber: EmailStr,
+        subscriber: EmailStr | None,
         ttl: int | None,
         expiration: int | None,
     ) -> WebPushMessage:
@@ -81,6 +84,12 @@ class WebPush:
             case _:
                 raise WebPushException("Unsupported type for sending message")
 
+        if subscriber:
+            self.subscriber = subscriber
+        else:
+            if not self.subscriber:
+                raise WebPushException("Subscriber email required")
+
         if ttl:
             if ttl < 0:
                 raise WebPushException("Invalid ttl value")
@@ -94,7 +103,7 @@ class WebPush:
         encrypted = self._encrypt(data, subscription)
         authorization = self.vapid.get_authorization_header(
             endpoint=subscription.endpoint,
-            subscriber=subscriber,
+            subscriber=self.subscriber,
             expiration=self.expiration,
         )
         return WebPushMessage(
