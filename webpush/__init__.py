@@ -25,17 +25,39 @@ class WebPush:
     Helper class for generating WebPush message
     """
 
-    def __init__(self, private_key: Path, public_key: Path) -> None:
+    def __init__(
+        self,
+        private_key: Path,
+        public_key: Path,
+        ttl: int = 0,
+        expiration: int = 12 * 60 * 60,
+    ) -> None:
+        """
+        :param private_key - file with private VAPID key
+        :param public_key - file with public VAPID key
+        :param ttl - (global) lifespan of a web push message in seconds
+        :param expiration - (global) time after which the token expires
+            value must not be more than 24 hours from the of the request
+        """
         self.vapid = VAPID(private_key=private_key, public_key=public_key)
         self.max_resord_size = 4096
+
+        if ttl < 0:
+            raise WebPushException("Invalid ttl value")
+
+        if expiration < 0 or expiration > 24 * 60 * 60:
+            raise WebPushException("Invalid expiration value")
+
+        self.ttl = ttl
+        self.expiration = expiration
 
     def get(
         self,
         message: bytes | str | dict,
         subscription: WebPushSubscription,
         subscriber: EmailStr,
-        ttl: int = 0,
-        expiration: int = 12 * 60 * 60,
+        ttl: int | None,
+        expiration: int | None,
     ) -> WebPushMessage:
         """
         :param message - the message to be sent
@@ -59,14 +81,26 @@ class WebPush:
             case _:
                 raise WebPushException("Unsupported type for sending message")
 
+        if ttl:
+            if ttl < 0:
+                raise WebPushException("Invalid ttl value")
+            self.ttl = ttl
+
+        if expiration:
+            if expiration < 0 or expiration > 24 * 60 * 60:
+                raise WebPushException("Invalid expiration value")
+            self.expiration = expiration
+
         encrypted = self._encrypt(data, subscription)
         authorization = self.vapid.get_authorization_header(
-            endpoint=subscription.endpoint, subscriber=subscriber, expiration=expiration
+            endpoint=subscription.endpoint,
+            subscriber=subscriber,
+            expiration=self.expiration,
         )
         return WebPushMessage(
             encrypted=encrypted,
             headers={
-                "ttl": str(ttl),
+                "ttl": str(self.ttl),
                 "content-encoding": "aes128gcm",
                 "authorization": authorization,
             },
