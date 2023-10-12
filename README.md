@@ -7,7 +7,7 @@ Simple library for working with [WebPush](https://web.dev/articles/push-notifica
 ### Installation
 
 ```bash
-TBA
+pip install webpush
 ```
 
 ### Basic Usage

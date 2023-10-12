@@ -27,8 +27,8 @@ class WebPush:
 
     def __init__(
         self,
-        private_key: Path,
-        public_key: Path,
+        private_key: str | Path,
+        public_key: str | Path,
         subscriber: EmailStr | None = None,
         ttl: int = 0,
         expiration: int = 12 * 60 * 60,
@@ -58,9 +58,9 @@ class WebPush:
         self,
         message: bytes | str | dict,
         subscription: WebPushSubscription,
-        subscriber: EmailStr | None,
-        ttl: int | None,
-        expiration: int | None,
+        subscriber: EmailStr | None = None,
+        ttl: int | None = None,
+        expiration: int | None = None,
     ) -> WebPushMessage:
         """
         :param message - the message to be sent

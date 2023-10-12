@@ -24,7 +24,12 @@ class VAPID:
     VAPID (Voluntary Application Server Identification)
     """
 
-    def __init__(self, private_key: Path, public_key: Path) -> None:
+    def __init__(self, private_key: str | Path, public_key: str | Path) -> None:
+        if isinstance(private_key, str):
+            private_key = Path(private_key)
+        if isinstance(public_key, str):
+            public_key = Path(public_key)
+
         if not private_key.expanduser().exists():
             raise VAPIDException("Private key file doesn't exists")
 
