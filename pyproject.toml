@@ -1,10 +1,14 @@
 [tool.poetry]
 name = "webpush"
-version = "0.1.2"
-description = "Python webpush library"
+version = "1.0.0"
+description = "WebPush library for python"
 authors = ["Alexey <delvinru@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/delvinru/webpush-py"
+repository = "https://github.com/delvinru/webpush-py"
+keywords = ["webpush", "pwa", "pydantic"]
+
 
 [tool.poetry.dependencies]
 python = "^3.10"

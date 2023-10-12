@@ -96,8 +96,7 @@ And last one, if you have ideas for improvements, bug fixes, feel free to contri
 
 ## Change log
 
-- 0.1.2 - small changes in internal components
-- 0.1.0 - initial release
+- 1.0.0 - initial release
 
 ## Credits
 
