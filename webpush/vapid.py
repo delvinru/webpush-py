@@ -6,6 +6,7 @@ import jwt
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric.types import PublicKeyTypes
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
     NoEncryption,
@@ -62,18 +63,26 @@ class VAPID:
             key=self.private_key,
             algorithm="ES256",
         )
-        public_key = self._encode_vapid_key(
-            self.public_key.public_bytes(
+        public_key = self.get_application_server_key(self.public_key)
+        return f"vapid t={token}, k={public_key}"
+
+    @staticmethod
+    def _encode_vapid_key(key: bytes) -> str:
+        return urlsafe_b64encode(key).replace(b"=", b"").decode()
+
+    @staticmethod
+    def get_application_server_key(public_key: PublicKeyTypes) -> str:
+        return VAPID._encode_vapid_key(
+            public_key.public_bytes(
                 encoding=serialization.Encoding.X962,
                 format=serialization.PublicFormat.UncompressedPoint,
             )
         )
-        return f"vapid t={token}, k={public_key}"
 
     @staticmethod
-    def generate_keys() -> tuple[bytes, bytes]:
+    def generate_keys() -> tuple[bytes, bytes, str]:
         """
-        Generate private/public keys in PEM format
+        Generate private/public keys in PEM format and application server key
         """
         private_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
         public_key = private_key.public_key()
@@ -82,7 +91,5 @@ class VAPID:
                 Encoding.PEM, PrivateFormat.PKCS8, encryption_algorithm=NoEncryption()
             ),
             public_key.public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo),
+            VAPID.get_application_server_key(public_key),
         )
-
-    def _encode_vapid_key(self, key: bytes) -> str:
-        return urlsafe_b64encode(key).replace(b"=", b"").decode()

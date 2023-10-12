@@ -32,17 +32,47 @@ message = wp.get(message='Hello, world!', subscription=subscription)
 requests.post(subscription.endpoint, data=message.encrypted, headers=message.headers)
 ```
 
-Generate VAPID keys:
+Generate VAPID keys and get applicationServerKey:
 ```
 vapid-gen
 ```
 
-Private key stored in `public_key.pem` and public key saved in `public_key.pem`
+Private key saved in `public_key.pem` and public key saved in `public_key.pem`.
+Application Server Key saved in `applicationServerKey`
 
-### Example simple FastApi server
+### simple usage with fastapi
 
 ```python
-TBA
+import aiohttp
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from webpush import WebPush, WebPushSubscription
+
+app = FastAPI()
+
+wp = WebPush(
+    public_key="./public_key.pem",
+    private_key="./private_key.pem",
+    subscriber="admin@mail.com",
+)
+
+
+@app.get("/notification/key")
+async def get_public_key() -> JSONResponse:
+    application_server_key = "<generated from vapid-gen>"
+    return JSONResponse(content={"public_key": application_server_key})
+
+
+@app.post("/notification/subscribe")
+async def subscribe_user(subscription: WebPushSubscription) -> JSONResponse:
+    message = wp.get(message="Hello, world", subscription=subscription)
+    async with aiohttp.ClientSession() as session:
+        await session.post(
+            url=str(subscription.endpoint),
+            data=message.encrypted,
+            headers=message.headers,
+        )
+    return JSONResponse(content={"status": "ok"})
 ```
 
 ## FAQ
@@ -66,6 +96,7 @@ And last one, if you have ideas for improvements, bug fixes, feel free to contri
 
 ## Change log
 
+- 0.1.2 - small changes in internal components
 - 0.1.0 - initial release
 
 ## Credits

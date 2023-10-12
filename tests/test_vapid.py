@@ -10,16 +10,17 @@ from webpush.vapid import VAPID, VAPIDException
 
 class ValidateVAPID(unittest.TestCase):
     def test_key_generation(self) -> None:
-        private_key, public_key = VAPID.generate_keys()
+        private_key, public_key, application_server_key = VAPID.generate_keys()
         self.assertIsNotNone(private_key)
         self.assertIsNotNone(public_key)
+        self.assertIsNotNone(application_server_key)
 
     def test_non_existing_files(self) -> None:
         with self.assertRaises(VAPIDException):
             VAPID(Path("/non-existing-file-2"), Path("/non-existing-file-2"))
 
     def test_get_authorization_header(self) -> None:
-        private_key, public_key = VAPID.generate_keys()
+        private_key, public_key, _ = VAPID.generate_keys()
         # some dirty hacks but ok
         private_fd, public_fd = NamedTemporaryFile(mode="wb"), NamedTemporaryFile(
             mode="wb"
