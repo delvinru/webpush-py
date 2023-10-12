@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "webpush-py"
+name = "webpush"
 version = "0.1.0"
 description = "Python webpush library"
 authors = ["Alexey <delvinru@gmail.com>"]
@@ -13,10 +13,11 @@ pyjwt = "^2.8.0"
 cryptography = "^41.0.4"
 email-validator = "^2.0.0.post2"
 
-
 [tool.poetry.group.dev.dependencies]
 pynvim = "^0.4.3"
-requests = "^2.31.0"
+
+[tool.poetry.scripts]
+vapid-gen = "webpush.cli:main"
 
 [build-system]
 requires = ["poetry-core"]
