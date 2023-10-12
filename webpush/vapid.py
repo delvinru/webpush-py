@@ -3,7 +3,15 @@ from base64 import urlsafe_b64encode
 from pathlib import Path
 
 import jwt
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.serialization import (
+    Encoding,
+    NoEncryption,
+    PrivateFormat,
+    PublicFormat,
+)
 from pydantic import AnyHttpUrl, EmailStr
 
 
@@ -56,6 +64,20 @@ class VAPID:
             )
         )
         return f"vapid t={token}, k={public_key}"
+
+    @staticmethod
+    def generate_keys() -> tuple[bytes, bytes]:
+        """
+        Generate private/public keys in PEM format
+        """
+        private_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
+        public_key = private_key.public_key()
+        return (
+            private_key.private_bytes(
+                Encoding.PEM, PrivateFormat.PKCS8, encryption_algorithm=NoEncryption()
+            ),
+            public_key.public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo),
+        )
 
     def _encode_vapid_key(self, key: bytes) -> str:
         return urlsafe_b64encode(key).replace(b"=", b"").decode()
