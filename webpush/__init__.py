@@ -29,7 +29,7 @@ class WebPush:
         self,
         private_key: Path,
         public_key: Path,
-        subscriber: EmailStr | None,
+        subscriber: EmailStr | None = None,
         ttl: int = 0,
         expiration: int = 12 * 60 * 60,
     ) -> None:
