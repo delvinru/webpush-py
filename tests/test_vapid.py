@@ -1,3 +1,4 @@
+import io
 import os
 import unittest
 from pathlib import Path
@@ -43,3 +44,31 @@ class ValidateVAPID(unittest.TestCase):
         public_fd.close()
 
         self.assertIsNotNone(header)
+
+    def test_BytesIO_keys_get_authorization_header(self):
+        private_key, public_key, _ = VAPID.generate_keys()
+
+        public_fd = io.BytesIO()
+        public_fd.write(public_key)
+        public_fd.seek(0)
+
+        private_fd = io.BytesIO()
+        private_fd.write(private_key)
+        private_fd.seek(0)
+
+        vapid = VAPID(private_key=private_fd, public_key=public_fd)
+
+        header = vapid.get_authorization_header(
+            endpoint=AnyHttpUrl("http://google.com"),
+            subscriber="test@mail.com",
+            expiration=10,
+        )
+
+        private_fd.close()
+        public_fd.close()
+
+        self.assertIsNotNone(header)
+
+
+
+
