@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "webpush"
-version = "1.0.0"
+version = "1.0.1"
 description = "WebPush library for python"
 authors = ["Alexey <delvinru@gmail.com>"]
 license = "MIT"
