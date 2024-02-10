@@ -3,6 +3,7 @@ import os
 import struct
 from base64 import urlsafe_b64decode
 from pathlib import Path
+from io import BytesIO, StringIO
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -26,12 +27,12 @@ class WebPush:
     """
 
     def __init__(
-        self,
-        private_key: str | Path,
-        public_key: str | Path,
-        subscriber: EmailStr | None = None,
-        ttl: int = 0,
-        expiration: int = 12 * 60 * 60,
+            self,
+            private_key: str | Path | BytesIO | StringIO,
+            public_key: str | Path | BytesIO,
+            subscriber: EmailStr | None = None,
+            ttl: int = 0,
+            expiration: int = 12 * 60 * 60,
     ) -> None:
         """
         :param private_key - file with private VAPID key
@@ -55,12 +56,12 @@ class WebPush:
         self.subscriber = subscriber or ""
 
     def get(
-        self,
-        message: bytes | str | dict,
-        subscription: WebPushSubscription,
-        subscriber: EmailStr | None = None,
-        ttl: int | None = None,
-        expiration: int | None = None,
+            self,
+            message: bytes | str | dict,
+            subscription: WebPushSubscription,
+            subscriber: EmailStr | None = None,
+            ttl: int | None = None,
+            expiration: int | None = None,
     ) -> WebPushMessage:
         """
         :param message - the message to be sent
