@@ -2,6 +2,7 @@ import json
 import os
 import struct
 from base64 import urlsafe_b64decode
+from io import StringIO, BytesIO
 from pathlib import Path
 
 from cryptography.hazmat.backends import default_backend
@@ -27,8 +28,8 @@ class WebPush:
 
     def __init__(
         self,
-        private_key: str | Path,
-        public_key: str | Path,
+        private_key: str | Path | BytesIO | StringIO,
+        public_key: str | Path | BytesIO,
         subscriber: EmailStr | None = None,
         ttl: int = 0,
         expiration: int = 12 * 60 * 60,
