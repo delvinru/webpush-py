@@ -2,8 +2,9 @@ import json
 import os
 import struct
 from base64 import urlsafe_b64decode
-from io import StringIO, BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
+from typing import Any
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -57,7 +58,7 @@ class WebPush:
 
     def get(
         self,
-        message: bytes | str | dict,
+        message: bytes | str | dict[Any, Any],
         subscription: WebPushSubscription,
         subscriber: EmailStr | None = None,
         ttl: int | None = None,

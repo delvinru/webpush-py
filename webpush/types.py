@@ -1,4 +1,4 @@
-from pydantic import AnyHttpUrl, BaseModel, Field
+from pydantic import AnyHttpUrl, BaseModel
 from typing_extensions import TypedDict
 
 
@@ -12,9 +12,13 @@ class WebPushSubscription(BaseModel):
     keys: WebPushKeys
 
 
-# a little bit of ugly but ok
 WebPushHeaders = TypedDict(
-    "WebPushHeaders", {"content-encoding": str, "ttl": str, "authorization": str}
+    "WebPushHeaders",
+    {
+        "content-encoding": str,
+        "ttl": str,
+        "authorization": str,
+    },
 )
 
 

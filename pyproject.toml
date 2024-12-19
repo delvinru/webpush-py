@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "webpush"
-version = "1.0.2"
+version = "1.0.3"
 description = "WebPush library for python"
 authors = ["Alexey <delvinru@gmail.com>"]
 license = "MIT"
@@ -12,10 +12,10 @@ keywords = ["webpush", "pwa", "pydantic"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = "^2.4.2"
-pyjwt = "^2.8.0"
-cryptography = "^41.0.4"
-email-validator = "^2.0.0.post2"
+pydantic = "^2.10.4"
+pyjwt = "^2.10.1"
+cryptography = "^41.0.7"
+email-validator = "^2.2.0"
 
 [tool.poetry.scripts]
 vapid-gen = "webpush.cli:main"
