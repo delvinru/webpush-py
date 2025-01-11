@@ -1,28 +1,29 @@
-[tool.poetry]
+[project]
 name = "webpush"
-version = "1.0.3"
+version = "1.0.4"
 description = "WebPush library for python"
-authors = ["Alexey <delvinru@gmail.com>"]
-license = "MIT"
+authors = [{ name = "Alexey", email = "delvinru@gmail.com" }]
+requires-python = "~=3.10"
 readme = "README.md"
-homepage = "https://github.com/delvinru/webpush-py"
-repository = "https://github.com/delvinru/webpush-py"
+license = "MIT"
 keywords = ["webpush", "pwa", "pydantic"]
+dependencies = [
+    "cryptography>=44.0.0",
+    "pydantic>=2.10.5",
+    "email-validator>=2.2.0",
+    "pyjwt>=2.10.1",
+]
 
+[project.urls]
+Homepage = "https://github.com/delvinru/webpush-py"
+Repository = "https://github.com/delvinru/webpush-py"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pydantic = "^2.10.4"
-pyjwt = "^2.10.1"
-cryptography = "^41.0.7"
-email-validator = "^2.2.0"
-
-[tool.poetry.scripts]
+[project.scripts]
 vapid-gen = "webpush.cli:main"
 
-[tool.poetry.group.dev.dependencies]
-pynvim = {git = "https://github.com/neovim/pynvim"}
+[dependency-groups]
+dev = ["pynvim>=0.5.2", "pytest>=8.3.4"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
