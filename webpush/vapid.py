@@ -34,6 +34,8 @@ class VAPID:
         # Load the private key
         if isinstance(private_key, io.BytesIO) or isinstance(private_key, io.StringIO):
             self.private_key = private_key.read()
+        elif isinstance(private_key, str):
+            self.private_key = private_key
         else:
             private_key_path = Path(private_key)
 
@@ -47,6 +49,8 @@ class VAPID:
         if isinstance(private_key, io.BytesIO):
             public_key_bytes = public_key.read()
             self.public_key = serialization.load_pem_public_key(public_key_bytes)
+        elif isinstance(public_key, str):
+            self.public_key = public_key
         else:
             public_key_path = Path(public_key)
 
