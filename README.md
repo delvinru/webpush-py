@@ -17,8 +17,12 @@ pip install webpush
 ```python
 import requests
 from webpush import WebPush, WebPushSubscription
+from pathlib import Path
 
-wp = WebPush(private_key="./private_key.pem", public_key="./public_key.pem")
+wp = WebPush(
+    private_key=Path("./private_key.pem"),
+    public_key=Path("./public_key.pem")
+)
 
 # example subscription info
 subscription = WebPushSubscription.model_validate({
