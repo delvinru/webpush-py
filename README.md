@@ -1,6 +1,8 @@
 # WebPush-Py
 
-Simple library for working with [WebPush](https://web.dev/articles/push-notifications-web-push-protocol) in python
+![PyPI - Version](https://img.shields.io/pypi/v/webpush)
+
+Simple library for working with [WebPush](https://web.dev/articles/push-notifications-web-push-protocol)
 
 ## Usage
 
