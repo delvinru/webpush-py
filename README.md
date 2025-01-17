@@ -33,6 +33,7 @@ requests.post(subscription.endpoint, data=message.encrypted, headers=message.hea
 ```
 
 Generate VAPID keys and get applicationServerKey:
+
 ```
 vapid-gen
 ```
@@ -43,16 +44,19 @@ Application Server Key saved in `applicationServerKey`
 ### simple usage with fastapi
 
 ```python
+from pathlib import Path
+
 import aiohttp
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+
 from webpush import WebPush, WebPushSubscription
 
 app = FastAPI()
 
 wp = WebPush(
-    public_key="./public_key.pem",
-    private_key="./private_key.pem",
+    public_key=Path("./public_key.pem"),
+    private_key=Path("./private_key.pem"),
     subscriber="admin@mail.com",
 )
 
@@ -76,6 +80,7 @@ async def subscribe_user(subscription: WebPushSubscription) -> JSONResponse:
 ```
 
 ## FAQ
+
 - Why do I need another library?
 
 The current python libraries that work with Web Push have been written for a very long time, so they do not support typing, try to support outdated encryption algorithms and pull a lot of deprecated dependencies.
