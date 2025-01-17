@@ -1,6 +1,6 @@
 [project]
 name = "webpush"
-version = "1.0.4"
+version = "1.0.5"
 description = "WebPush library for python"
 authors = [{ name = "Alexey", email = "delvinru@gmail.com" }]
 requires-python = "~=3.10"

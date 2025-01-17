@@ -29,8 +29,8 @@ class WebPush:
 
     def __init__(
         self,
-        private_key: str | Path | BytesIO | StringIO,
-        public_key: str | Path | BytesIO,
+        private_key: bytes | Path | BytesIO | StringIO,
+        public_key: bytes | Path | BytesIO,
         subscriber: EmailStr | None = None,
         ttl: int = 0,
         expiration: int = 12 * 60 * 60,
@@ -157,9 +157,7 @@ class WebPush:
 
         # Local keys
         local_server_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
-        local_public_key = local_server_key.public_key().public_bytes(
-            Encoding.X962, PublicFormat.UncompressedPoint
-        )
+        local_public_key = local_server_key.public_key().public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)
 
         pubkey = ec.EllipticCurvePublicKey.from_encoded_point(ec.SECP256R1(), dh)
 

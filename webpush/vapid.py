@@ -1,6 +1,6 @@
-import io
 import time
 from base64 import urlsafe_b64encode
+from io import BytesIO, StringIO
 from pathlib import Path
 
 import jwt
@@ -28,37 +28,39 @@ class VAPID:
 
     def __init__(
         self,
-        private_key: str | Path | io.StringIO | io.BytesIO,
-        public_key: str | Path | io.BytesIO,
+        private_key: bytes | Path | BytesIO | StringIO,
+        public_key: bytes | Path | BytesIO,
     ) -> None:
         # Load the private key
-        if isinstance(private_key, io.BytesIO) or isinstance(private_key, io.StringIO):
-            self.private_key = private_key.read()
-        else:
-            private_key_path = Path(private_key)
-
-            if not private_key_path.expanduser().exists():
-                raise VAPIDException("Private key file doesn't exists")
-
-            with open(private_key_path, mode="r", encoding="utf-8") as fd:
-                self.private_key = fd.read()
+        match private_key:
+            case BytesIO() | StringIO():
+                self.private_key = private_key.read()
+            case Path():
+                if not private_key.expanduser().exists():
+                    raise VAPIDException("Private key file doesn't exists")
+                self.private_key = private_key.read_text()
+            case bytes():
+                self.private_key = private_key
+            case _:
+                raise VAPIDException(f"Unsupported private key type: {type(private_key)}")
 
         # Load the public key
-        if isinstance(private_key, io.BytesIO):
-            public_key_bytes = public_key.read()
-            self.public_key = serialization.load_pem_public_key(public_key_bytes)
-        else:
-            public_key_path = Path(public_key)
+        public_key_data = b""
+        match public_key:
+            case BytesIO():
+                public_key_data = public_key.read()
+            case Path():
+                if not public_key.expanduser().exists():
+                    raise VAPIDException("Public key file doesn't exists")
+                public_key_data = public_key.read_bytes()
+            case bytes():
+                public_key_data = public_key
+            case _:
+                raise VAPIDException(f"Unsupported public key type: {type(public_key)}")
 
-            if not public_key_path.expanduser().exists():
-                raise VAPIDException("Public key file doesn't exists")
+        self.public_key = serialization.load_pem_public_key(public_key_data)
 
-            with open(public_key_path, "rb") as fd:
-                self.public_key = serialization.load_pem_public_key(fd.read())
-
-    def get_authorization_header(
-        self, endpoint: AnyHttpUrl, subscriber: EmailStr, expiration: int
-    ) -> str:
+    def get_authorization_header(self, endpoint: AnyHttpUrl, subscriber: EmailStr, expiration: int) -> str:
         """
         :param endpoint from subscribtion info
         :param subscriber email for response in vapid

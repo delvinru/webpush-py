@@ -22,17 +22,13 @@ class ValidateVAPID(unittest.TestCase):
     def test_get_authorization_header(self) -> None:
         private_key, public_key, _ = VAPID.generate_keys()
         # some dirty hacks but ok
-        private_fd, public_fd = NamedTemporaryFile(mode="wb"), NamedTemporaryFile(
-            mode="wb"
-        )
+        private_fd, public_fd = NamedTemporaryFile(mode="wb"), NamedTemporaryFile(mode="wb")
         private_fd.write(private_key)
         private_fd.flush()
         public_fd.write(public_key)
         public_fd.flush()
 
-        vapid = VAPID(
-            private_key=Path(private_fd.name), public_key=Path(public_fd.name)
-        )
+        vapid = VAPID(private_key=Path(private_fd.name), public_key=Path(public_fd.name))
         header = vapid.get_authorization_header(
             endpoint=AnyHttpUrl("http://google.com"),
             subscriber="test@mail.com",
@@ -44,7 +40,7 @@ class ValidateVAPID(unittest.TestCase):
 
         self.assertIsNotNone(header)
 
-    def test_BytesIO_keys_get_authorization_header(self):
+    def test_BytesIO_keys_get_authorization_header(self) -> None:
         private_key, public_key, _ = VAPID.generate_keys()
 
         public_fd = io.BytesIO()
@@ -68,6 +64,15 @@ class ValidateVAPID(unittest.TestCase):
 
         self.assertIsNotNone(header)
 
+    def test_raw_strings_get_authorization_header(self) -> None:
+        private_key, public_key, _ = VAPID.generate_keys()
 
+        vapid = VAPID(private_key=private_key, public_key=public_key)
 
+        header = vapid.get_authorization_header(
+            endpoint=AnyHttpUrl("http://google.com"),
+            subscriber="test@mail.com",
+            expiration=10,
+        )
 
+        self.assertIsNotNone(header)
