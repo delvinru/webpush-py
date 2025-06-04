@@ -85,6 +85,10 @@ async def subscribe_user(subscription: WebPushSubscription) -> JSONResponse:
     return JSONResponse(content={"status": "ok"})
 ```
 
+## More examples
+
+- [Web-Push-Notification-Minimal-Example](https://github.com/Open-Pectus/Web-Push-Notification-Minimal-Example) by @nneskildsf
+
 ## FAQ
 
 - Why do I need another library?
