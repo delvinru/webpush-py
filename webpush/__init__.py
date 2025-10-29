@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from pydantic import EmailStr
+from pydantic import BaseModel, EmailStr
 
 from webpush.types import WebPushMessage, WebPushSubscription
 from webpush.vapid import VAPID
@@ -58,7 +58,7 @@ class WebPush:
 
     def get(
         self,
-        message: bytes | str | dict[Any, Any],
+        message: bytes | str | dict[Any, Any] | BaseModel,
         subscription: WebPushSubscription,
         subscriber: EmailStr | None = None,
         ttl: int | None = None,
@@ -83,6 +83,8 @@ class WebPush:
                 data = message.encode()
             case dict():
                 data = json.dumps(message).encode()
+            case BaseModel():
+                data = message.model_dump_json().encode()
             case _:
                 raise WebPushException("Unsupported type for sending message")
 
